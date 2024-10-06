@@ -1,17 +1,12 @@
 'use client'
 import { playingContext, typePlayer } from '@/contexts/PlayingContext'
 import { spotifyContext } from '@/contexts/SpotifyContext'
+import { googleApiKeys } from '@/utils/apikey'
 import { convertSecondsToTime } from '@/utils/time'
 import axios from 'axios'
 import React from 'react'
 import { useContext, useState, useEffect, useRef } from 'react'
 import ReactPlayer from 'react-player'
-
-const googleApiKeys = [
-    'AIzaSyBzQIQn0m-ckWIEQEi1HPhrxG9U_ySwdH4',
-    'AIzaSyDBJ0uR3jcjnJDB3BOZYW8eJvIkGVFjdlw',
-    'AIzaSyCCEmGxTMX3oXNEpSHWNKfsg975pxhVjG0'
-]
 
 const Playing = ({ playing, setPlaying }) => {
 
@@ -40,6 +35,7 @@ const Playing = ({ playing, setPlaying }) => {
                     'Authorization': 'Bearer ' + spotifyData.accessToken,
                 },
             };
+            setTrack(playingData.track)
             axios(`https://api.spotify.com/v1/tracks/${playingData.track.id}`, getParameters)
                 .then(res => {
                     setTrack(res.data)
@@ -49,12 +45,12 @@ const Playing = ({ playing, setPlaying }) => {
                             playingHandler.setAlbum(res1.data)
                         })
                 })
-            axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[2]}`)
+            axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[4]}`)
                 .then(res => {
                     setUrlTracks(res.data.items.map(item => `https://www.youtube.com/watch?v=${item.id.videoId}`))
                 })
         }
-    }, [playingData.track])
+    }, [playingData.track?.id])
 
     useEffect(() => {
         if (playingData.album && playingData.track && playingData.type === typePlayer.album) {
@@ -108,7 +104,9 @@ const Playing = ({ playing, setPlaying }) => {
             {track && (
                 <>
                     <div className='flex w-[25%] gap-2'>
-                        <img src={track.album.images[0].url} className='h-[40px] rounded-md' />
+                        {track.album && (
+                            <img src={track.album.images[0].url} className='h-[40px] rounded-md' />
+                        )}
                         <div className="flex text-[white] flex-col items-start font-poppins">
                             <span className='text-[15px]'>{track.name}</span>
                             <span className='text-[13px] text-[#bababa]'>{track.artists.map(item => item.name).join(', ')}</span>

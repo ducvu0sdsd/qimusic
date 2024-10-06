@@ -1,4 +1,5 @@
 import { payloadContext } from '@/contexts/PayLoadContext'
+import { playingContext, typePlayer } from '@/contexts/PlayingContext';
 import { spotifyContext } from '@/contexts/SpotifyContext';
 import { api, TypeHTTP } from '@/utils/api';
 import axios from 'axios'
@@ -10,12 +11,20 @@ const Search = () => {
     const router = useRouter()
     const { payloadData, payloadHandler } = useContext(payloadContext)
     const { spotifyData } = useContext(spotifyContext)
-    const [typeTarget, setTypeTarget] = useState('All')
-    const types = ['All', 'Songs', 'Artists', 'Albums', 'Playlists']
+    const { playingHandler } = useContext(playingContext)
+    const [typeTarget, setTypeTarget] = useState('Tracks')
+    const types = ['Tracks', 'Artists', 'Albums', 'Playlists']
 
     // data
     const [album, setAlbum] = useState()
     const [artist, setArtist] = useState()
+    const [track, setTrack] = useState()
+
+    const reset = () => {
+        setAlbum()
+        setArtist()
+        setTrack()
+    }
 
     useEffect(() => {
         if (spotifyData.accessToken) {
@@ -28,11 +37,13 @@ const Search = () => {
             };
             axios(`https://api.spotify.com/v1/search?q=${payloadData.filter}&type=${typeTarget.slice(0, typeTarget.length - 1).toLowerCase()}`, getParameters)
                 .then(res => {
+                    reset()
                     if (typeTarget === 'Albums') {
                         setAlbum(res.data.albums)
                     } else if (typeTarget === 'Artists') {
-                        console.log(res.data.artists)
                         setArtist(res.data.artists)
+                    } else if (typeTarget === 'Tracks') {
+                        setTrack(res.data.tracks)
                     }
                 })
         }
@@ -44,6 +55,11 @@ const Search = () => {
             router.push(`/albums/${item.id}`)
         else if (typeTarget === 'Artists')
             router.push()
+        else if (typeTarget === 'Tracks') {
+            router.push(`/albums/${item.album.id}`)
+            playingHandler.setTrack(item)
+            playingHandler.setType(typePlayer.album)
+        }
     }
 
     return (
@@ -56,17 +72,25 @@ const Search = () => {
             <div className='overflow-y-auto w-full'>
                 <div className='grid grid-cols-7 gap-4 w-full'>
                     {album && album.items.map((item, index) => {
-                        return <div onClick={() => handleNavigate(item)} key={index} className='cursor-pointer flex flex-col gap-2 w-[150px] overflow-hidden'>
-                            <img src={item.images[0].url} className='h-[150px] aspect-square rounded-md ' />
-                            <span className="text-[#ffffffb6] font-poppins font-normal text-[13px]">
+                        return <div onClick={() => handleNavigate(item)} key={index} className='cursor-pointer flex flex-col gap-2 w-full overflow-hidden'>
+                            <img src={item.images[0].url} className='w-full aspect-square rounded-md ' />
+                            <span className="text-[#ffffffb6] text-center font-poppins font-normal text-[13px]">
                                 {item.name.length > 35 ? item.name.substring(0, 35) + '...' : item.name}
                             </span>
                         </div>
                     })}
                     {artist && artist.items.map((item, index) => {
-                        return <div onClick={() => handleNavigate(item)} key={index} className='cursor-pointer flex flex-col items-center gap-2 w-[150px] overflow-hidden'>
-                            <img src={item.images[0]?.url} className='h-[150px] aspect-square rounded-full' />
-                            <span className="text-[#ffffffb6] font-poppins font-normal text-[13px]">
+                        return <div onClick={() => handleNavigate(item)} key={index} className='cursor-pointer flex flex-col items-center gap-2 w-full overflow-hidden'>
+                            <img src={item.images[0]?.url} className='w-full aspect-square rounded-full' />
+                            <span className="text-[#ffffffb6] text-center font-poppins font-normal text-[13px]">
+                                {item.name.length > 35 ? item.name.substring(0, 35) + '...' : item.name}
+                            </span>
+                        </div>
+                    })}
+                    {track && track.items.map((item, index) => {
+                        return <div onClick={() => handleNavigate(item)} key={index} className='cursor-pointer flex flex-col items-center gap-2 w-full overflow-hidden'>
+                            <img src={item.album.images[0]?.url} className='w-full aspect-square rounded-md' />
+                            <span className="text-[#ffffffb6] text-center font-poppins font-normal text-[13px]">
                                 {item.name.length > 35 ? item.name.substring(0, 35) + '...' : item.name}
                             </span>
                         </div>
