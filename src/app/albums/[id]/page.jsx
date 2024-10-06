@@ -18,6 +18,7 @@ export default function Albums() {
     const { playingData, playingHandler } = useContext(playingContext)
     const [album, setAlbum] = useState()
     const wrapperRef = useRef()
+    const [height, setHeight] = useState(0)
 
     useEffect(() => {
         if (spotifyData.accessToken) {
@@ -42,11 +43,17 @@ export default function Albums() {
         playingHandler.setType(typePlayer.album)
     }
 
+    useEffect(() => {
+        if (wrapperRef.current) {
+            setHeight(wrapperRef.current.offsetHeight)
+        }
+    }, [wrapperRef.current])
+
     return (
         <section className="overflow-auto h-screen w-full bg-[#121212] flex flex-col px-3">
             <Navbar />
             {(payloadData.filter === '' && album) ? (
-                <div ref={wrapperRef} style={{ height: playingData.playing ? `${wrapperRef.current.offsetHeight - 70}px` : '85%', transition: '0.5s' }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
+                <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : '87%', transition: '0.5s' }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
                     <div className='flex items-center w-full gap-4 relative'>
                         <img src={album.images[0].url} className='w-[16%] rounded-lg aspect-square' />
                         <div className='flex flex-col gap-2 text-[white]'>
