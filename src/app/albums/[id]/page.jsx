@@ -38,7 +38,6 @@ export default function Albums() {
     }, [id, spotifyData.accessToken])
 
     const handleChooseAlbum = (track) => {
-        playingHandler.setAlbum(album)
         playingHandler.setTrack(track)
         playingHandler.setType(typePlayer.album)
     }

@@ -36,8 +36,8 @@ export default function RootLayout({ children }) {
         <meta name="google-site-verification" content="qPr_3m_jtgVoFmOL2IRmvbU2OdtNkvMzWNbAkpMcueU" />
       </head>
       <body>
-        <PlayingProvider>
-          <SpotifyProvider>
+        <SpotifyProvider>
+          <PlayingProvider>
             <UserProvider>
               <VisibleProvider>
                 <AuthProvider>
@@ -47,8 +47,8 @@ export default function RootLayout({ children }) {
                 </AuthProvider>
               </VisibleProvider>
             </UserProvider>
-          </SpotifyProvider>
-        </PlayingProvider>
+          </PlayingProvider>
+        </SpotifyProvider>
       </body>
     </html>
   );

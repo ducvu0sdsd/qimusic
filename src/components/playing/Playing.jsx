@@ -1,5 +1,6 @@
 'use client'
 import { playingContext, typePlayer } from '@/contexts/PlayingContext'
+import { spotifyContext } from '@/contexts/SpotifyContext'
 import { convertSecondsToTime } from '@/utils/time'
 import axios from 'axios'
 import React from 'react'
@@ -8,12 +9,14 @@ import ReactPlayer from 'react-player'
 
 const googleApiKeys = [
     'AIzaSyBzQIQn0m-ckWIEQEi1HPhrxG9U_ySwdH4',
-    'AIzaSyDBJ0uR3jcjnJDB3BOZYW8eJvIkGVFjdlw'
+    'AIzaSyDBJ0uR3jcjnJDB3BOZYW8eJvIkGVFjdlw',
+    'AIzaSyCCEmGxTMX3oXNEpSHWNKfsg975pxhVjG0'
 ]
 
 const Playing = ({ playing, setPlaying }) => {
 
     const { playingData, playingHandler } = useContext(playingContext)
+    const { spotifyData } = useContext(spotifyContext)
     const [track, setTrack] = useState()
     const [urlTracks, setUrlTracks] = useState('')
     const [duration, setDuration] = useState(0)
@@ -30,10 +33,24 @@ const Playing = ({ playing, setPlaying }) => {
     useEffect(() => {
         if (playingData.track) {
             const query = `${playingData.track.name} - ${playingData.track.artists.map(item => item.name).join(',')} - lyris`
-            setTrack(playingData.track)
-            axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[0]}`)
+            const getParameters = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + spotifyData.accessToken,
+                },
+            };
+            axios(`https://api.spotify.com/v1/tracks/${playingData.track.id}`, getParameters)
                 .then(res => {
-                    console.log(res.data.items.map(item => `https://www.youtube.com/watch?v=${item.id.videoId}`))
+                    setTrack(res.data)
+                    playingHandler.setTrack(res.data)
+                    axios(`https://api.spotify.com/v1/albums/${res.data.album.id}`, getParameters)
+                        .then(res1 => {
+                            playingHandler.setAlbum(res1.data)
+                        })
+                })
+            axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[2]}`)
+                .then(res => {
                     setUrlTracks(res.data.items.map(item => `https://www.youtube.com/watch?v=${item.id.videoId}`))
                 })
         }
@@ -90,9 +107,12 @@ const Playing = ({ playing, setPlaying }) => {
         <section className='flex justify-around items-center overflow-hidden w-screen h-[70px] bg-[#121212] fixed bottom-1 left-0' style={{ height: playing ? '13%' : 0, transition: '0.5s' }}>
             {track && (
                 <>
-                    <div className="flex text-[white] flex-col items-start font-poppins w-[25%]">
-                        <span className='text-[15px]'>{track.name}</span>
-                        <span className='text-[13px] text-[#bababa]'>{track.artists.map(item => item.name).join(', ')}</span>
+                    <div className='flex w-[25%] gap-2'>
+                        <img src={track.album.images[0].url} className='h-[40px] rounded-md' />
+                        <div className="flex text-[white] flex-col items-start font-poppins">
+                            <span className='text-[15px]'>{track.name}</span>
+                            <span className='text-[13px] text-[#bababa]'>{track.artists.map(item => item.name).join(', ')}</span>
+                        </div>
                     </div>
                     <div className='flex flex-col text-[white] w-[37%] items-center gap-[2px]'>
                         <div className='flex items-center h-[40px] gap-[2px]'>
