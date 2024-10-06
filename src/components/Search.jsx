@@ -32,7 +32,7 @@ const Search = () => {
         }
     }, [payloadData.filter])
 
-    const handleNavigate = () => {
+    const handleNavigate = (item) => {
         payloadHandler.setFilter('')
         router.push(`/albums/${item.id}`)
     }
@@ -47,7 +47,7 @@ const Search = () => {
             <div className='overflow-y-auto w-full'>
                 <div className='grid grid-cols-7 gap-4 w-full'>
                     {album && album.items.map((item, index) => {
-                        return <div onClick={() => handleNavigate()} key={index} className='cursor-pointer flex flex-col gap-2 w-[150px] overflow-hidden'>
+                        return <div onClick={() => handleNavigate(item)} key={index} className='cursor-pointer flex flex-col gap-2 w-[150px] overflow-hidden'>
                             <img src={item.images[0].url} className='h-[150px] aspect-square rounded-md ' />
                             <span className="text-[#ffffffb6] font-poppins font-normal text-[13px]">
                                 {item.name.length > 35 ? item.name.substring(0, 35) + '...' : item.name}
