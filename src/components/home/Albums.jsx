@@ -34,8 +34,8 @@ const Albums = ({ type, name }) => {
             <div className='grid grid-cols-7 gap-4 w-full'>
                 {albums && albums.items.map((item, index) => {
                     if (index <= 6) {
-                        return <div onClick={() => { router.push(`/albums/${item.id}`) }} key={index} className='cursor-pointer flex flex-col gap-2 w-[150px] overflow-hidden'>
-                            <img src={item.images[0].url} className='h-[150px] aspect-square rounded-md ' />
+                        return <div onClick={() => { router.push(`/albums/${item.id}`) }} key={index} className='cursor-pointer flex flex-col gap-2 w-full overflow-hidden'>
+                            <img src={item.images[0].url} className='w-full aspect-square rounded-md ' />
                             <span className="text-[#ffffffb6] font-poppins font-normal text-[13px]">
                                 {item.name.length > 35 ? item.name.substring(0, 35) + '...' : item.name}
                             </span>

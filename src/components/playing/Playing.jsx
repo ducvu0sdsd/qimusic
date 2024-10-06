@@ -87,7 +87,7 @@ const Playing = ({ playing, setPlaying }) => {
     }
 
     return (
-        <section className='flex justify-around items-center overflow-hidden w-screen h-[13%] bg-[#121212] fixed bottom-0 left-0' style={{ height: playing ? '13%' : 0, transition: '0.5s' }}>
+        <section className='flex justify-around items-center overflow-hidden w-screen h-[70px] bg-[#121212] fixed bottom-0 left-0' style={{ height: playing ? '13%' : 0, transition: '0.5s' }}>
             {track && (
                 <>
                     <div className="flex text-[white] flex-col items-start font-poppins w-[25%]">

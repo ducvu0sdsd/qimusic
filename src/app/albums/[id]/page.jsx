@@ -7,7 +7,7 @@ import { spotifyContext } from "@/contexts/SpotifyContext";
 import { convertMsToMinutesSeconds, convertMsToTime } from "@/utils/time";
 import axios from "axios";
 import { useParams } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 
 export default function Albums() {
 
@@ -17,6 +17,7 @@ export default function Albums() {
     const { payloadData } = useContext(payloadContext)
     const { playingData, playingHandler } = useContext(playingContext)
     const [album, setAlbum] = useState()
+    const wrapperRef = useRef()
 
     useEffect(() => {
         if (spotifyData.accessToken) {
@@ -45,7 +46,7 @@ export default function Albums() {
         <section className="overflow-auto h-screen w-full bg-[#121212] flex flex-col px-3">
             <Navbar />
             {(payloadData.filter === '' && album) ? (
-                <div style={{ height: playingData.playing ? '73%' : '85%', transition: '0.5s' }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
+                <div ref={wrapperRef} style={{ height: playingData.playing ? `${wrapperRef.current.offsetHeight - 70}px` : '85%', transition: '0.5s' }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
                     <div className='flex items-center w-full gap-4 relative'>
                         <img src={album.images[0].url} className='w-[16%] rounded-lg aspect-square' />
                         <div className='flex flex-col gap-2 text-[white]'>

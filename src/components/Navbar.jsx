@@ -15,7 +15,7 @@ const Navbar = () => {
 
     return (
         <>
-            <section className='my-2 flex items-center h-[10%] justify-between relative'>
+            <section className='my-3 flex items-center h-[50px] justify-between relative'>
                 <div className='flex items-center h-[100%]'>
                     <div className='flex w-[8%]'>
                         <img onClick={() => router.push('/')} src='/logo.png' className='cursor-pointer aspect-square w-[67%] mr-[1rem]' />

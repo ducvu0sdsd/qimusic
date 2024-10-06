@@ -39,8 +39,8 @@ const PlayingProvider = ({ children }) => {
 
     return (
         <playingContext.Provider value={{ playingData: data, playingHandler: handler }}>
-            <Playing playing={playing} setPlaying={setPlaying} />
             {children}
+            <Playing playing={playing} setPlaying={setPlaying} />
         </playingContext.Provider>
     )
 }

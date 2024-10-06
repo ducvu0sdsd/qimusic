@@ -15,6 +15,7 @@ const Search = () => {
 
     // data
     const [album, setAlbum] = useState()
+    const [artist, setArtist] = useState()
 
     useEffect(() => {
         if (spotifyData.accessToken) {
@@ -27,14 +28,22 @@ const Search = () => {
             };
             axios(`https://api.spotify.com/v1/search?q=${payloadData.filter}&type=${typeTarget.slice(0, typeTarget.length - 1).toLowerCase()}`, getParameters)
                 .then(res => {
-                    setAlbum(res.data.albums)
+                    if (typeTarget === 'Albums') {
+                        setAlbum(res.data.albums)
+                    } else if (typeTarget === 'Artists') {
+                        console.log(res.data.artists)
+                        setArtist(res.data.artists)
+                    }
                 })
         }
-    }, [payloadData.filter])
+    }, [payloadData.filter, typeTarget])
 
     const handleNavigate = (item) => {
         payloadHandler.setFilter('')
-        router.push(`/albums/${item.id}`)
+        if (typeTarget === 'Albums')
+            router.push(`/albums/${item.id}`)
+        else if (typeTarget === 'Artists')
+            router.push()
     }
 
     return (
@@ -49,6 +58,14 @@ const Search = () => {
                     {album && album.items.map((item, index) => {
                         return <div onClick={() => handleNavigate(item)} key={index} className='cursor-pointer flex flex-col gap-2 w-[150px] overflow-hidden'>
                             <img src={item.images[0].url} className='h-[150px] aspect-square rounded-md ' />
+                            <span className="text-[#ffffffb6] font-poppins font-normal text-[13px]">
+                                {item.name.length > 35 ? item.name.substring(0, 35) + '...' : item.name}
+                            </span>
+                        </div>
+                    })}
+                    {artist && artist.items.map((item, index) => {
+                        return <div onClick={() => handleNavigate(item)} key={index} className='cursor-pointer flex flex-col items-center gap-2 w-[150px] overflow-hidden'>
+                            <img src={item.images[0]?.url} className='h-[150px] aspect-square rounded-full' />
                             <span className="text-[#ffffffb6] font-poppins font-normal text-[13px]">
                                 {item.name.length > 35 ? item.name.substring(0, 35) + '...' : item.name}
                             </span>
