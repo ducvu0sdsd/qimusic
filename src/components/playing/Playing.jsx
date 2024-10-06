@@ -131,10 +131,10 @@ const Playing = ({ playing, setPlaying }) => {
                             }
                         }}
                         ref={reactPlayerRef}
-                        height={'400px'}
-                        width={'400px'}
+                        height={0}
+                        width={0}
                         progressInterval={100}
-                        url={urlTracks[1]}
+                        url={urlTracks[0]}
                         onError={handleError}
                         // url={'https://www.youtube.com/watch?v=Vk5-c_v4gMU'}
                         playing={playingTrack}
