@@ -1,4 +1,6 @@
 'use client'
+import Navbar from "@/components/Navbar";
+import Search from "@/components/Search";
 import { payloadContext } from "@/contexts/PayLoadContext";
 import { playingContext } from "@/contexts/PlayingContext";
 import { useContext } from "react";
