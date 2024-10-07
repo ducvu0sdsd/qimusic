@@ -1,5 +1,5 @@
 import axios from "axios";
-export let baseURL = 'http://localhost:8080/api/v1'
+export let baseURL = 'https://qimusic-be.vercel.app/api/v1'
 axios.defaults.baseURL = `${baseURL}`
 
 export const TypeHTTP = {
@@ -14,7 +14,7 @@ export const api = ({ path, body, type, sendToken, port }) => {
         baseURL = 'http://localhost:' + port + '/api/v1'
         axios.defaults.baseURL = `${baseURL}`
     } else {
-        baseURL = 'http://localhost:8080/api/v1'
+        baseURL = 'https://qimusic-be.vercel.app/api/v1'
         axios.defaults.baseURL = `${baseURL}`
     }
     const accessToken = globalThis.window.localStorage.getItem('accessToken')

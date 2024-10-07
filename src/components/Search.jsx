@@ -13,7 +13,7 @@ const Search = () => {
     const { spotifyData } = useContext(spotifyContext)
     const { playingHandler } = useContext(playingContext)
     const [typeTarget, setTypeTarget] = useState('Tracks')
-    const types = ['Tracks', 'Artists', 'Albums', 'Playlists']
+    const types = ['Tracks', 'Artists', 'Albums']
 
     // data
     const [album, setAlbum] = useState()
@@ -41,6 +41,7 @@ const Search = () => {
                     if (typeTarget === 'Albums') {
                         setAlbum(res.data.albums)
                     } else if (typeTarget === 'Artists') {
+                        console.log(res.data.artists)
                         setArtist(res.data.artists)
                     } else if (typeTarget === 'Tracks') {
                         setTrack(res.data.tracks)
@@ -54,7 +55,7 @@ const Search = () => {
         if (typeTarget === 'Albums')
             router.push(`/albums/${item.id}`)
         else if (typeTarget === 'Artists')
-            router.push()
+            router.push(`/artists/${item.id}`)
         else if (typeTarget === 'Tracks') {
             router.push(`/albums/${item.album.id}`)
             playingHandler.setTrack(item)

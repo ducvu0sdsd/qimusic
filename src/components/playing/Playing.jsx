@@ -26,6 +26,15 @@ const Playing = ({ playing, setPlaying }) => {
     const [playingTrack, setPlayingTrack] = useState(true)
 
     useEffect(() => {
+        if (playingData.album) {
+            const index = playingData.album.tracks.items.map(item => item.id).indexOf(playingData.track.id)
+            if (played >= duration && index < playingData.album.tracks.items.length - 1) {
+                playingHandler.setTrack(playingData.album.tracks.items[index + 1])
+            }
+        }
+    }, [played])
+
+    useEffect(() => {
         if (playingData.track) {
             const query = `${playingData.track.name} - ${playingData.track.artists.map(item => item.name).join(',')} - lyris`
             const getParameters = {
@@ -54,15 +63,20 @@ const Playing = ({ playing, setPlaying }) => {
 
     useEffect(() => {
         if (playingData.album && playingData.track && playingData.type === typePlayer.album) {
-            if (playingData.track.id === playingData.album.tracks.items[0].id) {
+            if (playingData.album.tracks.items.length === 1) {
                 setEnablePrev(false)
-                setEnableNext(true)
-            } else if (playingData.track.id === playingData.album.tracks.items[playingData.album.tracks.items.length - 1].id) {
-                setEnablePrev(true)
                 setEnableNext(false)
             } else {
-                setEnablePrev(true)
-                setEnableNext(true)
+                if (playingData.track.id === playingData.album.tracks.items[0].id) {
+                    setEnablePrev(false)
+                    setEnableNext(true)
+                } else if (playingData.track.id === playingData.album.tracks.items[playingData.album.tracks.items.length - 1].id) {
+                    setEnablePrev(true)
+                    setEnableNext(false)
+                } else {
+                    setEnablePrev(true)
+                    setEnableNext(true)
+                }
             }
         }
     }, [playingData.album, playingData.type, playingData.track])
@@ -143,9 +157,6 @@ const Playing = ({ playing, setPlaying }) => {
                                     rel: 1, // Tắt gợi ý video liên quan 
                                     fs: 0,
                                 },
-                            },
-                            facebook: {
-                                appId: '1048093426472292'
                             }
                         }}
                         ref={reactPlayerRef}
