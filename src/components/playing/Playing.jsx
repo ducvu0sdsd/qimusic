@@ -28,7 +28,7 @@ const Playing = ({ playing, setPlaying }) => {
     useEffect(() => {
         if (playingData.album) {
             const index = playingData.album.tracks.items.map(item => item.id).indexOf(playingData.track.id)
-            if (played >= duration && index < playingData.album.tracks.items.length - 1) {
+            if (played >= duration - 1 && index < playingData.album.tracks.items.length - 1) {
                 playingHandler.setTrack(playingData.album.tracks.items[index + 1])
             }
         }

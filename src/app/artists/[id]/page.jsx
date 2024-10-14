@@ -9,6 +9,7 @@ import Navbar from '@/components/Navbar';
 import Search from '@/components/Search';
 import { convertMsToMinutesSeconds } from '@/utils/time';
 import { payloadContext } from '@/contexts/PayLoadContext';
+import { formatNumber } from '@/utils/other';
 
 const Artists = () => {
 
@@ -44,7 +45,6 @@ const Artists = () => {
             };
             axios(`https://api.spotify.com/v1/artists/${id}`, getParameters)
                 .then(res => {
-                    console.log(res.data)
                     setArtist(res.data)
                 })
         }
@@ -56,12 +56,12 @@ const Artists = () => {
             <Navbar />
             {(payloadData.filter === '' && artist) ? (
                 <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s' }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
-                    <div className='flex items-center w-full gap-4 relative'>
-                        <img src={artist.images[0].url} className='w-[16%] rounded-lg aspect-square' />
+                    <div className='flex items-center w-full gap-6 relative'>
+                        <img src={artist.images[0].url} className='w-[15%] rounded-full aspect-square' />
                         <div className='flex flex-col gap-2 text-[white]'>
-                            {/* <span className='font-medium font-poppins'>{album.album_type.slice(0, 1).toUpperCase() + album.album_type.slice(1, album.album_type.length)}</span> */}
+                            <span className='font-medium font-poppins'>Artists</span>
                             <span className='font-poppins text-[45px] leading-[50px] font-semibold'>{artist.name}</span>
-                            {/* <span className='flex items-center font-poppins text-[14px] text-[#b9b9b9]'>{album.artists.map(item => item.name).join(' - ')}<div className='bg-[#b9b9b9] p-[3px] rounded-full mx-2 translate-y-[1px]' />{album.release_date.split('-')[0]}<div className='bg-[#b9b9b9] p-[3px] rounded-full mx-2 translate-y-[1px]' />{album.total_tracks} songs, {convertMsToTime(album.tracks.items.reduce((total, track) => { return total + track.duration_ms }, 0))}</span> */}
+                            <span className='flex items-center font-poppins text-[14px] text-[#b9b9b9]'>{formatNumber(artist.followers.total)} Followers</span>
                         </div>
                         <button className='bx bx-play absolute right-[3.5rem] hover:scale-[1.1] transition-all text-[40px] text-[white] bg-[#00a1ff] p-2 rounded-full'></button>
                     </div>
