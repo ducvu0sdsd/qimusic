@@ -60,7 +60,7 @@ const Artists = () => {
         <section className="overflow-auto h-screen w-full bg-[#121212] flex flex-col px-3">
             <Navbar />
             {(payloadData.filter === '' && artist) ? (
-                <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s', width: userData.user ? `${width - 70}px` : `${width}px`, marginLeft: userData.user ? '70px' : 0 }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
+                <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s', width: userData.user ? `${width - 70 - (playingData.visibleQueue ? 355 : 0)}px` : `${width - (playingData.visibleQueue ? 355 : 0)}px`, marginLeft: userData.user ? '70px' : 0 }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
                     <div className='flex items-center w-full gap-6 relative'>
                         <img src={artist.images[0].url} className='w-[15%] rounded-full aspect-square' />
                         <div className='flex flex-col gap-2 text-[white]'>

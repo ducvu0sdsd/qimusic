@@ -1,5 +1,6 @@
 'use client'
 import Playing from "@/components/playing/Playing";
+import Queue from "@/components/Queue";
 import { createContext, useState, useEffect } from "react";
 
 export const playingContext = createContext()
@@ -15,20 +16,23 @@ const PlayingProvider = ({ children }) => {
     const [type, setType] = useState(typePlayer.none)
     const [album, setAlbum] = useState()
     const [playing, setPlaying] = useState(false)
+    const [visibleQueue, setVisibleQueue] = useState(false)
     const [track, setTrack] = useState()
 
     const data = {
         playing,
         track,
         album,
-        type
+        type,
+        visibleQueue
     }
 
     const handler = {
         setPlaying,
         setTrack,
         setAlbum,
-        setType
+        setType,
+        setVisibleQueue
     }
 
     useEffect(() => {
@@ -41,6 +45,7 @@ const PlayingProvider = ({ children }) => {
         <playingContext.Provider value={{ playingData: data, playingHandler: handler }}>
             {children}
             <Playing playing={playing} setPlaying={setPlaying} />
+            <Queue />
         </playingContext.Provider>
     )
 }

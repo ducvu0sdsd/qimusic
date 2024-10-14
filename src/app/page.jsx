@@ -34,7 +34,7 @@ export default function Home() {
     <section className="overflow-auto h-screen w-full bg-[#121212] flex flex-col px-3">
       <Navbar />
       {payloadData.filter === '' ? (
-        <div style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s', width: userData.user ? `${width - 70}px` : `${width}px`, marginLeft: userData.user ? '70px' : 0 }} className="ml-[6%] bg-[#1b1b1b] overflow-y-auto w-[94%] h-full rounded-lg px-[1.5rem] py-[1rem]">
+        <div style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s', width: userData.user ? `${width - 70 - (playingData.visibleQueue ? 355 : 0)}px` : `${width - (playingData.visibleQueue ? 355 : 0)}px`, marginLeft: userData.user ? '70px' : 0 }} className="ml-[6%] bg-[#1b1b1b] overflow-y-auto w-[94%] h-full rounded-lg px-[1.5rem] py-[1rem]">
           <Albums type={'citypop'} name={'City Pop'} />
           <Albums type={'kdrama'} name={'KDrama'} />
           <Albums type={'kpop'} name={'KPOP'} />

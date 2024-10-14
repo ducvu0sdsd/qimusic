@@ -63,7 +63,7 @@ export default function Albums() {
         <section className="overflow-auto h-screen w-full bg-[#121212] flex flex-col px-3">
             <Navbar />
             {(payloadData.filter === '' && album) ? (
-                <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s', width: userData.user ? `${width - 70}px` : `${width}px`, marginLeft: userData.user ? '70px' : 0 }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
+                <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s', width: userData.user ? `${width - 70 - (playingData.visibleQueue ? 355 : 0)}px` : `${width - (playingData.visibleQueue ? 355 : 0)}px`, marginLeft: userData.user ? '70px' : 0 }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
                     <div className='flex items-center w-full gap-4 relative'>
                         <img src={album.images[0].url} className='w-[16%] rounded-lg aspect-square' />
                         <div className='flex flex-col gap-2 text-[white]'>
@@ -81,7 +81,21 @@ export default function Albums() {
                         </div>
                         {album.tracks.items.map((item, index) => (
                             <div key={index} onClick={() => handleChooseAlbum(item)} className='cursor-pointer my-2 font-poppins text-[white] flex items-center w-full'>
-                                <div className='w-[3%] text-[14px] text-[#bababa]'>{index + 1}</div>
+                                {!playingData.track ? (
+                                    <div className='w-[3%] text-[14px] text-[#bababa]'>{index + 1}</div>
+                                ) :
+                                    playingData.track.id === item.id ? (
+                                        <div className="flex w-[3%] items-end space-x-1">
+                                            <div className="bar w-[2px] bg-[#00a1ff] h-3 animate-bar-1"></div>
+                                            <div className="bar w-[2px] bg-[#00a1ff] h-2 animate-bar-2"></div>
+                                            <div className="bar w-[2px] bg-[#00a1ff] h-3 animate-bar-3"></div>
+                                            <div className="bar w-[2px] bg-[#00a1ff] h-2 animate-bar-4"></div>
+                                        </div>
+
+                                    ) : (
+                                        <div className='w-[3%] text-[14px] text-[#bababa]'>{index + 1}</div>
+                                    )
+                                }
                                 <div className='w-[90%] flex flex-col'>
                                     <span className='text-[15px]'>{item.name}</span>
                                     <span className='text-[13px] text-[#bababa]'>{item.artists.map(item => item.name).join(', ')}</span>

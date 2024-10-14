@@ -22,6 +22,7 @@ const Playing = ({ playing, setPlaying }) => {
     const [enablePrev, setEnablePrev] = useState(false)
     const [enableNext, setEnableNext] = useState(false)
     const [volumePercent, setVolumePercent] = useState(0)
+    const [fullscreen, setFullscreen] = useState(false)
 
     // action
     const [repeat, setRepeat] = useState(false)
@@ -157,6 +158,18 @@ const Playing = ({ playing, setPlaying }) => {
         console.error('Playback error:', error);
     }
 
+
+    const handleChangeFullScreen = () => {
+        const elem = document.documentElement;
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen();
+            setFullscreen(true)
+        } else {
+            document.exitFullscreen();
+            setFullscreen(false)
+        }
+    };
+
     return (
         <>
             <section className='flex justify-between px-5 items-center overflow-hidden w-screen h-[90px] bg-[#121212] fixed bottom-1 left-0' style={{ transition: '0.5s', height: playingData.playing ? '90px' : 0 }}>
@@ -188,21 +201,34 @@ const Playing = ({ playing, setPlaying }) => {
                             </div>
                         </div>
                         <div className="flex text-[white] items-center translate-y-[10px] justify-end font-poppins w-[25%] gap-2">
-                            <i onClick={() => playingHandler.setPlaying(false)} className='bx bxs-playlist text-[35px]'></i>
+                            <i onClick={() => playingHandler.setVisibleQueue(!playingData.visibleQueue)} className='bx bxs-playlist cursor-pointer text-[35px]'></i>
                             <div className='flex items-center gap-2'>
-                                <i onClick={() => playingHandler.setPlaying(false)} className='fa-solid fa-volume-high text-[26px]'></i>
+                                {volumePercent === 0 ? (
+                                    <i onClick={() => {
+                                        setVolumePercent(100)
+                                        globalThis.localStorage.setItem('volume', 100)
+                                    }} className='fa-solid fa-volume-xmark cursor-pointer text-[26px]'></i>
+                                ) : (
+                                    <i onClick={() => {
+                                        setVolumePercent(0)
+                                        globalThis.localStorage.setItem('volume', 0)
+                                    }} className='fa-solid fa-volume-high text-[26px] cursor-pointer'></i>
+                                )}
                                 <div ref={volumeRef} onClick={handleClickVolume} className='flex w-[80px] overflow-hidden bg-[white] h-1 rounded-lg cursor-pointer'>
                                     <div style={{ width: `${volumePercent}%`, transition: '0.5s' }} className='h-full bg-[#00a1ff]' />
                                 </div>
                             </div>
-                            <i onClick={() => playingHandler.setPlaying(false)} className='bx bx bx-fullscreen text-[35px]'></i>
-                            {/* <i class='bx bxs-playlist'></i> */}
+                            {fullscreen ? (
+                                <i onClick={() => handleChangeFullScreen()} className='cursor-pointer bx bx-exit-fullscreen text-[35px]'></i>
+                            ) : (
+                                <i onClick={() => handleChangeFullScreen()} className='cursor-pointer bx bx bx-fullscreen text-[35px]'></i>
+                            )}
                         </div>
                     </>
                 )}
-            </section>
+            </section >
             {/* react player */}
-            <ReactPlayer
+            < ReactPlayer
                 config={{
                     youtube: {
                         playerVars: {
@@ -213,13 +239,15 @@ const Playing = ({ playing, setPlaying }) => {
                             fs: 0,
                         },
                     }
-                }}
+                }
+                }
                 ref={reactPlayerRef}
                 height={0}
                 width={0}
                 progressInterval={100}
                 url={urlTracks[0]}
                 onError={handleError}
+                volume={volumePercent / 100}
                 // url={'https://www.youtube.com/watch?v=Vk5-c_v4gMU'}
                 playing={playingTrack}
                 loop={repeat}
