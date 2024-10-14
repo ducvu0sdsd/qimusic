@@ -29,14 +29,20 @@ const Playing = ({ playing, setPlaying }) => {
 
     // get Volume 
     useEffect(() => {
-        const vol = globalThis.localStorage.getItem('volume')
-        if (vol) {
-            console.log(Number(vol) / 100)
-            setVolumePercent(Number(vol) / 100)
-        } else {
-            setVolumePercent(1)
-        }
-    }, [globalThis.localStorage.getItem('volume')])
+        const handleVolumeChange = () => {
+            const vol = globalThis.localStorage.getItem('volume');
+            if (vol) {
+                setVolumePercent(Number(vol));
+            } else {
+                setVolumePercent(100);
+            }
+        };
+        handleVolumeChange();
+        window.addEventListener('storage', handleVolumeChange);
+        return () => {
+            window.removeEventListener('storage', handleVolumeChange);
+        };
+    }, []);
 
     useEffect(() => {
         if (playingData.album) {
