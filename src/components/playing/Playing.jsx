@@ -18,12 +18,25 @@ const Playing = ({ playing, setPlaying }) => {
     const [played, setPlayed] = useState(0)
     const reactPlayerRef = useRef()
     const processRef = useRef()
+    const volumeRef = useRef()
     const [enablePrev, setEnablePrev] = useState(false)
     const [enableNext, setEnableNext] = useState(false)
+    const [volumePercent, setVolumePercent] = useState(0)
 
     // action
     const [repeat, setRepeat] = useState(false)
     const [playingTrack, setPlayingTrack] = useState(true)
+
+    // get Volume 
+    useEffect(() => {
+        const vol = globalThis.localStorage.getItem('volume')
+        if (vol) {
+            console.log(Number(vol) / 100)
+            setVolumePercent(Number(vol) / 100)
+        } else {
+            setVolumePercent(1)
+        }
+    }, [globalThis.localStorage.getItem('volume')])
 
     useEffect(() => {
         if (playingData.album) {
@@ -36,7 +49,7 @@ const Playing = ({ playing, setPlaying }) => {
 
     useEffect(() => {
         if (playingData.track) {
-            const query = `${playingData.track.name} - ${playingData.track.artists.map(item => item.name).join(',')} - lyris`
+            const query = `${playingData.track.name.replaceAll("'", '').replaceAll('`', '')} - ${playingData.track.artists.map(item => item.name).join(',')} - lyris`
             const getParameters = {
                 method: 'GET',
                 headers: {
@@ -87,6 +100,13 @@ const Playing = ({ playing, setPlaying }) => {
         const rect = processRef.current.getBoundingClientRect();
         const percent = (x - rect.x) * 100 / rect.width
         reactPlayerRef.current.seekTo(duration * (percent / 100))
+    };
+
+    const handleClickVolume = (event) => {
+        const x = event.clientX;
+        const rect = volumeRef.current.getBoundingClientRect();
+        const percent = (x - rect.x) * 100 / rect.width
+        globalThis.localStorage.setItem('volume', percent)
     };
 
     const handleOnProgress = () => {
@@ -143,8 +163,16 @@ const Playing = ({ playing, setPlaying }) => {
                                 <span className='w-[40px]'>{convertSecondsToTime(duration)}</span>
                             </div>
                         </div>
-                        <div className="flex text-[white] items-center justify-end bg-[red] font-poppins w-[25%]">
-
+                        <div className="flex text-[white] items-center translate-y-[10px] justify-end font-poppins w-[25%] gap-2">
+                            <i onClick={() => playingHandler.setPlaying(false)} className='bx bxs-playlist text-[35px]'></i>
+                            <div className='flex items-center gap-2'>
+                                <i onClick={() => playingHandler.setPlaying(false)} className='fa-solid fa-volume-high text-[26px]'></i>
+                                <div ref={volumeRef} onClick={handleClickVolume} className='flex w-[80px] overflow-hidden bg-[white] h-1 rounded-lg cursor-pointer'>
+                                    <div style={{ width: `${volumePercent}%`, transition: '0.5s' }} className='h-full bg-[#00a1ff]' />
+                                </div>
+                            </div>
+                            <i onClick={() => playingHandler.setPlaying(false)} className='bx bx bx-fullscreen text-[35px]'></i>
+                            {/* <i class='bx bxs-playlist'></i> */}
                         </div>
                     </>
                 )}
