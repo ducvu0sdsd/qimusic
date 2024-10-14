@@ -4,6 +4,7 @@ import Search from "@/components/Search";
 import { payloadContext } from "@/contexts/PayLoadContext";
 import { playingContext, typePlayer } from "@/contexts/PlayingContext";
 import { spotifyContext } from "@/contexts/SpotifyContext";
+import { userContext } from "@/contexts/UserContext";
 import { convertMsToMinutesSeconds, convertMsToTime } from "@/utils/time";
 import axios from "axios";
 import { useParams } from "next/navigation";
@@ -18,7 +19,9 @@ export default function Albums() {
     const { playingData, playingHandler } = useContext(playingContext)
     const [album, setAlbum] = useState()
     const wrapperRef = useRef()
+    const { userData } = useContext(userContext)
     const [height, setHeight] = useState(0)
+    const [width, setWidth] = useState(0)
 
     useEffect(() => {
         if (spotifyData.accessToken) {
@@ -43,22 +46,24 @@ export default function Albums() {
     }
 
     useEffect(() => {
-        const updateHeight = () => {
+        const updateSize = () => {
             const newHeight = window.innerHeight - 50 - 40;
+            const newWidth = window.innerWidth - 24;
+            setWidth(newWidth)
             setHeight(newHeight);
         };
 
-        updateHeight(); // Set initial height
+        updateSize(); // Set initial height
 
-        window.addEventListener('resize', updateHeight); // Listen for window resize
-        return () => window.removeEventListener('resize', updateHeight); // Cleanup on unmount
+        window.addEventListener('resize', updateSize); // Listen for window resize
+        return () => window.removeEventListener('resize', updateSize); // Cleanup on unmount
     }, []);
 
     return (
         <section className="overflow-auto h-screen w-full bg-[#121212] flex flex-col px-3">
             <Navbar />
             {(payloadData.filter === '' && album) ? (
-                <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s' }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
+                <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s', width: userData.user ? `${width - 70}px` : `${width}px`, marginLeft: userData.user ? '70px' : 0 }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
                     <div className='flex items-center w-full gap-4 relative'>
                         <img src={album.images[0].url} className='w-[16%] rounded-lg aspect-square' />
                         <div className='flex flex-col gap-2 text-[white]'>

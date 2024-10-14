@@ -1,6 +1,7 @@
 import { payloadContext } from '@/contexts/PayLoadContext'
 import { playingContext, typePlayer } from '@/contexts/PlayingContext';
 import { spotifyContext } from '@/contexts/SpotifyContext';
+import { userContext } from '@/contexts/UserContext';
 import { api, TypeHTTP } from '@/utils/api';
 import axios from 'axios'
 import { useRouter } from 'next/navigation';
@@ -11,9 +12,12 @@ const Search = () => {
     const router = useRouter()
     const { payloadData, payloadHandler } = useContext(payloadContext)
     const { spotifyData } = useContext(spotifyContext)
-    const { playingHandler } = useContext(playingContext)
+    const { playingHandler, playingData } = useContext(playingContext)
     const [typeTarget, setTypeTarget] = useState('Tracks')
     const types = ['Tracks', 'Artists', 'Albums']
+    const { userData } = useContext(userContext)
+    const [height, setHeight] = useState(0)
+    const [width, setWidth] = useState(0)
 
     // data
     const [album, setAlbum] = useState()
@@ -50,6 +54,20 @@ const Search = () => {
         }
     }, [payloadData.filter, typeTarget])
 
+    useEffect(() => {
+        const updateSize = () => {
+            const newHeight = window.innerHeight - 50 - 40;
+            const newWidth = window.innerWidth - 24;
+            setWidth(newWidth)
+            setHeight(newHeight);
+        };
+
+        updateSize(); // Set initial height
+
+        window.addEventListener('resize', updateSize); // Listen for window resize
+        return () => window.removeEventListener('resize', updateSize); // Cleanup on unmount
+    }, []);
+
     const handleNavigate = (item) => {
         payloadHandler.setFilter('')
         if (typeTarget === 'Albums')
@@ -64,14 +82,14 @@ const Search = () => {
     }
 
     return (
-        <div className="ml-[6%] bg-[#1b1b1b] w-[94%] flex flex-col h-[85%] rounded-lg p-2 ">
+        <div style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s', width: userData.user ? `${width - 70}px` : `${width}px`, marginLeft: userData.user ? '70px' : 0 }} className="ml-[6%] bg-[#1b1b1b] w-[94%] flex flex-col h-[85%] rounded-lg p-2 ">
             <div className='flex w-full gap-2 mb-4'>
                 {types.map((type, index) => (
                     <button onClick={() => setTypeTarget(type)} style={{ transition: '0.5s', color: typeTarget === type ? 'black' : 'white', backgroundColor: typeTarget !== type ? '#2c2c2c' : 'white' }} className='bg-[#2c2c2c] px-3 rounded-2xl text-[14px] py-1 text-[white] font-poppins' key={index}>{type}</button>
                 ))}
             </div>
             <div className='overflow-y-auto w-full'>
-                <div className='grid grid-cols-7 gap-4 w-full'>
+                <div className='grid lg:grid-cols-7 xl:grid-cols-10 gap-4 w-full'>
                     {album && album.items.map((item, index) => {
                         return <div onClick={() => handleNavigate(item)} key={index} className='cursor-pointer flex flex-col gap-2 w-full overflow-hidden'>
                             <img src={item.images[0].url} className='w-full aspect-square rounded-md ' />

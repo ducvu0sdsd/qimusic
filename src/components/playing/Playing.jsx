@@ -28,7 +28,7 @@ const Playing = ({ playing, setPlaying }) => {
     useEffect(() => {
         if (playingData.album) {
             const index = playingData.album.tracks.items.map(item => item.id).indexOf(playingData.track.id)
-            if (played >= duration - 1 && index < playingData.album.tracks.items.length - 1) {
+            if (played >= duration - 1 && index < playingData.album.tracks.items.length - 1 && repeat !== true) {
                 playingHandler.setTrack(playingData.album.tracks.items[index + 1])
             }
         }
@@ -114,66 +114,67 @@ const Playing = ({ playing, setPlaying }) => {
     }
 
     return (
-        <section className='flex justify-around items-center overflow-hidden w-screen h-[70px] bg-[#121212] fixed bottom-1 left-0' style={{ height: playing ? '13%' : 0, transition: '0.5s' }}>
-            {track && (
-                <>
-                    <div className='flex w-[25%] gap-2'>
-                        {track.album && (
-                            <img src={track.album.images[0].url} className='h-[40px] rounded-md' />
-                        )}
-                        <div className="flex text-[white] flex-col items-start font-poppins">
-                            <span className='text-[15px]'>{track.name}</span>
-                            <span className='text-[13px] text-[#bababa]'>{track.artists.map(item => item.name).join(', ')}</span>
-                        </div>
-                    </div>
-                    <div className='flex flex-col text-[white] w-[37%] items-center gap-[2px]'>
-                        <div className='flex items-center h-[40px] gap-[2px]'>
-                            <i className='text-[25px] bx bx-shuffle' ></i>
-                            <i onClick={() => handlePrev()} style={{ cursor: enablePrev ? 'pointer' : 'default', color: enablePrev ? 'white' : '#999' }} className='text-[40px] bx bx-skip-previous' ></i>
-                            {!playingTrack ? <i onClick={() => setPlayingTrack(true)} className='text-[45px] bx bx-play cursor-pointer' ></i> : <i onClick={() => setPlayingTrack(false)} className='text-[45px] bx bx-pause cursor-pointer' ></i>}
-                            <i onClick={() => handleNext()} style={{ cursor: enableNext ? 'pointer' : 'default', color: enableNext ? 'white' : '#999' }} className='text-[40px] bx bx-skip-next' ></i>
-                            <i onClick={() => setRepeat(!repeat)} style={{ color: repeat ? '#00a1ff' : 'white' }} className='cursor-pointer text-[20px] ml-1 fa-solid fa-repeat' ></i>
-                        </div>
-                        <div className='flex text-[14px] items-center w-full gap-2 justify-center font-poppins'>
-                            <span className='w-[40px]'>{convertSecondsToTime(played)}</span>
-                            <div ref={processRef} onClick={handleClickProcess} className='flex w-[100%] overflow-hidden bg-[white] h-1 rounded-lg cursor-pointer'>
-                                <div style={{ width: `${played * 100 / duration}%`, transition: '0.5s' }} className='h-full bg-[#00a1ff]' />
+        <>
+            <section className='flex justify-between px-5 items-center overflow-hidden w-screen h-[90px] bg-[#121212] fixed bottom-1 left-0' style={{ transition: '0.5s', height: playingData.playing ? '90px' : 0 }}>
+                {track && (
+                    <>
+                        <div className='flex w-[25%] gap-2'>
+                            {track.album && (
+                                <img src={track.album.images[0].url} className='h-[40px] rounded-md' />
+                            )}
+                            <div className="flex text-[white] flex-col items-start font-poppins">
+                                <span className='text-[15px]'>{track.name}</span>
+                                <span className='text-[13px] text-[#bababa]'>{track.artists.map(item => item.name).join(', ')}</span>
                             </div>
-                            <span className='w-[40px]'>{convertSecondsToTime(duration)}</span>
                         </div>
-                    </div>
-                    <div className="flex text-[white] items-center justify-end font-poppins w-[25%]">
-                        <i onClick={() => playingHandler.setPlaying(false)} className='bx bx-chevron-down text-[35px]'></i>
-                    </div>
+                        <div className='flex flex-col text-[white] w-[37%] items-center gap-[2px]'>
+                            <div className='flex items-center h-[40px] gap-[2px]'>
+                                <i className='text-[25px] bx bx-shuffle' ></i>
+                                <i onClick={() => handlePrev()} style={{ cursor: enablePrev ? 'pointer' : 'default', color: enablePrev ? 'white' : '#999' }} className='text-[40px] bx bx-skip-previous' ></i>
+                                {!playingTrack ? <i onClick={() => setPlayingTrack(true)} className='text-[45px] bx bx-play cursor-pointer' ></i> : <i onClick={() => setPlayingTrack(false)} className='text-[45px] bx bx-pause cursor-pointer' ></i>}
+                                <i onClick={() => handleNext()} style={{ cursor: enableNext ? 'pointer' : 'default', color: enableNext ? 'white' : '#999' }} className='text-[40px] bx bx-skip-next' ></i>
+                                <i onClick={() => setRepeat(!repeat)} style={{ color: repeat ? '#00a1ff' : 'white' }} className='cursor-pointer text-[20px] ml-1 fa-solid fa-repeat' ></i>
+                            </div>
+                            <div className='flex text-[14px] items-center w-full gap-2 justify-center font-poppins'>
+                                <span className='w-[40px]'>{convertSecondsToTime(played)}</span>
+                                <div ref={processRef} onClick={handleClickProcess} className='flex w-[100%] overflow-hidden bg-[white] h-1 rounded-lg cursor-pointer'>
+                                    <div style={{ width: `${played * 100 / duration}%`, transition: '0.5s' }} className='h-full bg-[#00a1ff]' />
+                                </div>
+                                <span className='w-[40px]'>{convertSecondsToTime(duration)}</span>
+                            </div>
+                        </div>
+                        <div className="flex text-[white] items-center justify-end bg-[red] font-poppins w-[25%]">
 
-                    {/* react player */}
-                    <ReactPlayer
-                        config={{
-                            youtube: {
-                                playerVars: {
-                                    controls: 1, // Hiển thị bảng điều khiển
-                                    modestbranding: 1, // Ẩn logo YouTube
-                                    showinfo: 1, // Ẩn tiêu đề và thông tin video
-                                    rel: 1, // Tắt gợi ý video liên quan 
-                                    fs: 0,
-                                },
-                            }
-                        }}
-                        ref={reactPlayerRef}
-                        height={0}
-                        width={0}
-                        progressInterval={100}
-                        url={urlTracks[0]}
-                        onError={handleError}
-                        // url={'https://www.youtube.com/watch?v=Vk5-c_v4gMU'}
-                        playing={playingTrack}
-                        loop={repeat}
-                        onProgress={() => handleOnProgress()}
-                        onDuration={() => setDuration(Math.floor(reactPlayerRef.current?.getDuration()))}
-                    />
-                </>
-            )}
-        </section>
+                        </div>
+                    </>
+                )}
+            </section>
+            {/* react player */}
+            <ReactPlayer
+                config={{
+                    youtube: {
+                        playerVars: {
+                            controls: 1, // Hiển thị bảng điều khiển
+                            modestbranding: 1, // Ẩn logo YouTube
+                            showinfo: 1, // Ẩn tiêu đề và thông tin video
+                            rel: 1, // Tắt gợi ý video liên quan 
+                            fs: 0,
+                        },
+                    }
+                }}
+                ref={reactPlayerRef}
+                height={0}
+                width={0}
+                progressInterval={100}
+                url={urlTracks[0]}
+                onError={handleError}
+                // url={'https://www.youtube.com/watch?v=Vk5-c_v4gMU'}
+                playing={playingTrack}
+                loop={repeat}
+                onProgress={() => handleOnProgress()}
+                onDuration={() => setDuration(Math.floor(reactPlayerRef.current?.getDuration()))}
+            />
+        </>
     )
 }
 

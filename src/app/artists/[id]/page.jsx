@@ -10,6 +10,7 @@ import Search from '@/components/Search';
 import { convertMsToMinutesSeconds } from '@/utils/time';
 import { payloadContext } from '@/contexts/PayLoadContext';
 import { formatNumber } from '@/utils/other';
+import { userContext } from '@/contexts/UserContext';
 
 const Artists = () => {
 
@@ -21,17 +22,21 @@ const Artists = () => {
     const { playingData, playingHandler } = useContext(playingContext)
     const wrapperRef = useRef()
     const [height, setHeight] = useState(0)
+    const [width, setWidth] = useState(0)
+    const { userData } = useContext(userContext)
 
     useEffect(() => {
-        const updateHeight = () => {
+        const updateSize = () => {
             const newHeight = window.innerHeight - 50 - 40;
+            const newWidth = window.innerWidth - 24;
+            setWidth(newWidth)
             setHeight(newHeight);
         };
 
-        updateHeight(); // Set initial height
+        updateSize(); // Set initial height
 
-        window.addEventListener('resize', updateHeight); // Listen for window resize
-        return () => window.removeEventListener('resize', updateHeight); // Cleanup on unmount
+        window.addEventListener('resize', updateSize); // Listen for window resize
+        return () => window.removeEventListener('resize', updateSize); // Cleanup on unmount
     }, []);
 
     useEffect(() => {
@@ -55,7 +60,7 @@ const Artists = () => {
         <section className="overflow-auto h-screen w-full bg-[#121212] flex flex-col px-3">
             <Navbar />
             {(payloadData.filter === '' && artist) ? (
-                <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s' }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
+                <div ref={wrapperRef} style={{ height: playingData.playing ? `${height - 70}px` : `${height}px`, transition: '0.5s', width: userData.user ? `${width - 70}px` : `${width}px`, marginLeft: userData.user ? '70px' : 0 }} className="ml-[6%] flex flex-col bg-[#1b1b1b] overflow-y-auto w-[94%] rounded-lg px-[1.5rem] py-[1rem]">
                     <div className='flex items-center w-full gap-6 relative'>
                         <img src={artist.images[0].url} className='w-[15%] rounded-full aspect-square' />
                         <div className='flex flex-col gap-2 text-[white]'>
