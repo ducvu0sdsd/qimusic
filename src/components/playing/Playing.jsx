@@ -29,20 +29,13 @@ const Playing = ({ playing, setPlaying }) => {
 
     // get Volume 
     useEffect(() => {
-        const handleVolumeChange = () => {
-            const vol = globalThis.localStorage.getItem('volume');
-            if (vol) {
-                setVolumePercent(Number(vol));
-            } else {
-                setVolumePercent(100);
-            }
-        };
-        handleVolumeChange();
-        window.addEventListener('storage', handleVolumeChange);
-        return () => {
-            window.removeEventListener('storage', handleVolumeChange);
-        };
-    }, []);
+        const vol = globalThis.localStorage.getItem('volume')
+        if (vol) {
+            setVolumePercent(Number(vol))
+        } else {
+            setVolumePercent(100)
+        }
+    }, [])
 
     useEffect(() => {
         if (playingData.album) {
@@ -73,9 +66,33 @@ const Playing = ({ playing, setPlaying }) => {
                             playingHandler.setAlbum(res1.data)
                         })
                 })
-            axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[4]}`)
+            axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[0]}`)
                 .then(res => {
                     setUrlTracks(res.data.items.map(item => `https://www.youtube.com/watch?v=${item.id.videoId}`))
+                })
+                .catch(() => {
+                    axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[1]}`)
+                        .then(res => {
+                            setUrlTracks(res.data.items.map(item => `https://www.youtube.com/watch?v=${item.id.videoId}`))
+                        })
+                        .catch(() => {
+                            axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[2]}`)
+                                .then(res => {
+                                    setUrlTracks(res.data.items.map(item => `https://www.youtube.com/watch?v=${item.id.videoId}`))
+                                })
+                                .catch(() => {
+                                    axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[3]}`)
+                                        .then(res => {
+                                            setUrlTracks(res.data.items.map(item => `https://www.youtube.com/watch?v=${item.id.videoId}`))
+                                        })
+                                        .catch(() => {
+                                            axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${googleApiKeys[4]}`)
+                                                .then(res => {
+                                                    setUrlTracks(res.data.items.map(item => `https://www.youtube.com/watch?v=${item.id.videoId}`))
+                                                })
+                                        })
+                                })
+                        })
                 })
         }
     }, [playingData.track?.id])
@@ -113,6 +130,7 @@ const Playing = ({ playing, setPlaying }) => {
         const rect = volumeRef.current.getBoundingClientRect();
         const percent = (x - rect.x) * 100 / rect.width
         globalThis.localStorage.setItem('volume', percent)
+        setVolumePercent(percent)
     };
 
     const handleOnProgress = () => {
